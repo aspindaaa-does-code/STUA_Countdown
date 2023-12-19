@@ -23,6 +23,6 @@ To run the project, enter the MTA and BusTime API keys into `export.py`. Then, r
 
 Some pictures of the current version of the project, are below:
 
-<b>Current Version (September 2023 - TBD):</b>
+## Current Version (September 2023 - TBD):
 
 ![](picture1.png)
