@@ -21,7 +21,7 @@ To run the project, enter the MTA and BusTime API keys into `export.py`. Then, r
 - To access the API for lirr data: http://127.0.0.1:7082/lirr
 - To access the API for delay data: http://127.0.0.1:7082/delay
 
-Some pictures of the current version of the project, are below:
+Some pictures of the current version of the project are below:
 
 ## Current Version (September 2023 - TBD):
 
