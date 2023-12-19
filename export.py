@@ -1,16 +1,33 @@
+"""
+Ravindra Mangar
+Last Updated: 2023-12-19
+Project: STUA Countdown Board
+
+export.py
+----------------------------------------
+This file is used to organize transit data from stua.py and format it into a JSON string for the front-end to use.
+MTA and BusTime keys can be found on the MTA Developer Portal and BusTime Developer Portal respectively.
+----------------------------------------
+"""
+
 import stua, time
 
-stua.keyMTA("<INSERT MTA KEY HERE>") 
-stua.keyBUSTIME("<INSERT BUSTIME KEY HERE>")
+# Input API Keys here
+stua.keyMTA("INSERT MTA API KEY HERE") 
+stua.keyBUSTIME("INSERT BUSTIME API KEY HERE")
 
+# This is the minimum countdown time for a train to be displayed on the board, organized by line
+# The order is: Seventh Avenue Lines, Eighth Avenue Lines, Broadway Lines, Nassau Ave Lines, Lexington Avenue Lines
 CRIT_RATE = [6, 7, 9, 12, 12]
 
+# This is for the front-end JSON homepage
 def refresh():
     json_string = {
         "access": "Welcome to the StuyTransit Departure Board API!",
     }
     return json_string
 
+# This is for the front-end JSON homepage, and simply grabs data from stua.py without any modifications to the format
 def subway():
 
     global CRIT_RATE
@@ -32,6 +49,7 @@ def subway():
 
     return masterlistSUBWAY
 
+# This is for the front-end JSON homepage, and simply grabs data from stua.py without any modifications to the format
 def bus():
 
     masterlistBUS = stua.gtfsBusBATCHED([("404969", 0, 1, 1, "NONE"), ("404969", 0, 2, 1, "NONE"), #0-1
@@ -43,10 +61,12 @@ def bus():
   
     return masterlistBUS
 
+# This is for the front-end JSON homepage, and simply grabs data from stua.py without any modifications to the format
 def lirr():
     masterlistLIRR = stua.gtfsLIRRBATCHED([("237", "0", 1, 20, ["Port Washington", "Hempstead"]), ("241", "0", 1, 20, []), ("349", "0", 1, 20, ["Port Washington", "Hempstead"])])
     return masterlistLIRR
 
+# Converts a datetime object into a string in the format of "HH:MM AM/PM"
 def modlirrTIME(input):
     if type(input) == str:
         return "00:00"
@@ -55,6 +75,7 @@ def modlirrTIME(input):
         t = t[1:]
     return t
 
+# Takes raw return from lirr() and formats it into a JSON string for the front-end to use
 def export_lirr():
     t1 = time.time()
     masterlistLIRR = lirr()
@@ -73,6 +94,7 @@ def export_lirr():
 
     return json_string
 
+# Takes raw return from subway() and bus(), along with a stua.gtfsFerry() call, and formats it into a JSON string for the front-end to use
 def export():
 
     t1 = time.time()
@@ -82,6 +104,7 @@ def export():
 
     bbch = masterlistSUBWAY[25:35]
 
+    # Because Nassau Ave and Lexington Ave lines use different GTFS links, this complies both lists into one and sorts the trains by time
     stua.sort(bbch)
 
     bbch = bbch[:5]

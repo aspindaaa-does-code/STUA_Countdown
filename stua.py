@@ -1,13 +1,30 @@
-import aiohttp, asyncio, traceback, concurrent.futures, multiprocessing
-import requests, csv, datetime, math, os, json, calendar, traceback
+"""
+Ravindra Mangar
+Last Updated: 2023-12-19
+Project: STUA Countdown Board
+
+stua.py
+----------------------------------------
+This file is used to retrieve real-time transit data from the MTA and LIRR.
+It is also used to receive real-time alerts from the MTA and LIRR.
+For ferry data at Vesey Street, this file pulls real-time data from the NYC Ferry API.
+----------------------------------------
+"""
+
+# Imports
+import aiohttp, asyncio, traceback, concurrent.futures, multiprocessing # for optimizations
+import requests, csv, datetime, math, os, json, calendar, traceback # for data retrieval and cleaning
 import time as te
-from xml.etree.ElementTree import fromstring, ElementTree as ET
+from xml.etree.ElementTree import fromstring, ElementTree as ET # for data retrieval and cleaning
+
+# Google Transit Feed Imports
 import gtfs_realtime_pb2
 import nyct_subway_pb2
 
 APIMTA = ""
 APIBUSTIME = ""
 
+# Classes for each transit type
 class gtfsSubway():
     def __init__(self):
         self.route_id = ""
@@ -35,37 +52,6 @@ class gtfsSubway():
         self.current_id = current_id
         self.terminus_borough = terminus_borough
 
-    def get(self, station, direction, responses, batched=False):
-        _validkeySubway(_getAPIMTA())
-        _responseIndex(responses)
-        output = _transitSubway(station, direction, responses, _getAPIMTA())
-        if (output == "NO TRAINS"):
-            self.route_id = "X"
-            self.terminus = "NO TRAINS"
-            self.terminus_id = "NO TRAINS"
-            self.station = convertSubway(station)
-            self.station_id = station
-            self.direction = direction
-            self.time = "X"
-            descriptions = "NO TRAINS"
-            self.service_pattern = "NO TRAINS"
-            self.service_description = "NO TRAINS"
-            self.trip_id = "NO TRAINS"
-            self.current = "NO TRAINS"
-        else:
-            self.route_id = output[1]
-            self.terminus = convertSubway(output[2][:-1])
-            self.terminus_id = output[2]
-            self.station = convertSubway(output[3])
-            self.station_id = output[3]
-            self.direction = output[4]
-            self.time = output[0]
-            descriptions = _routes(output[1])
-            self.service_pattern = descriptions[0]
-            self.service_description = descriptions[1]
-            self.trip_id = output[5]
-            self.current = output[6]
-
 class gtfsBus():
     def __init__(self):
         self.route_id = ""
@@ -78,33 +64,6 @@ class gtfsBus():
         self.direction = 0
         self.trip_id = ""
         self.vehicle = ""
-
-    def get(self, stop, direction, responses):
-        _validkeyBus(_getAPIBUSTIME())
-        _responseIndex(responses)
-        output = _transitBus(stop, direction, responses, _getAPIBUSTIME())
-        if (output == "NO BUSES"):
-            self.route_id = "NO BUSES"
-            self.terminus = "NO BUSES"
-            self.terminus_id = "NO BUSES"
-            self.stop = stop
-            self.stop_id = convertBus(stop)
-            self.time = "X"
-            self.service_pattern = "NO BUSES"
-            self.direction = direction
-            self.trip_id = "NO BUSES"
-            self.vehicle = "NO BUSES"
-        else:
-            self.route_id = output[1]
-            self.terminus = output[5]
-            self.terminus_id = output[2]
-            self.stop = output[4]
-            self.stop_id = output[3]
-            self.time = output[0]
-            self.service_pattern = output[7]
-            self.direction = output[6]
-            self.trip_id = output[8]
-            self.vehicle = output[9]
 
     def set(self, route_id, terminus, terminus_id, stop, stop_id, time, service_pattern, direction, trip_id, vehicle):
         self.route_id = route_id
@@ -135,43 +94,6 @@ class gtfsLIRR():
         self.vehicle = ""
         self.core_time = ""
         self.color = ""
-
-    def get(self, input):
-        _validkeySubway(_getAPIMTA())
-        _responseIndex(input[2])
-        output = _transitLIRR(input, _getAPIMTA())
-        if (output == "NO TRAINS"):
-            self.route_id = "NO TRAINS"
-            self.terminus = "NO TRAINS"
-            self.terminus_id = "NO TRAINS"
-            self.station = convertLIRR(input[0])
-            self.station_id = input[0]
-            self.time = -1
-            self.service_description = "NO TRAINS"
-            self.service_pattern = "NO TRAINS"
-            self.station_id_list = ["NO TRAINS"]
-            self.station_name_list = ["NO TRAINS"]
-            self.direction = input[1]
-            self.trip_id = "NO TRAINS"
-            self.vehicle = "NO TRAINS"
-            self.core_time = "00:00 XM"
-            self.color = "NO TRAINS"
-        else:
-            self.route_id = output[1]
-            self.terminus = convertLIRR(output[2])
-            self.terminus_id = output[2]
-            self.station = convertLIRR(output[3])
-            self.station_id = output[3]
-            self.time = output[0]
-            self.service_description = f"{_timeconvert(output[0])} train to " + convertLIRR(output[2])
-            self.service_pattern = convertLIRR(output[2])
-            self.station_id_list = output[6]
-            self.station_name_list = output[7]
-            self.direction = output[4]
-            self.trip_id = output[5]
-            self.vehicle = output[8]
-            self.core_time = output[9]
-            self.color = output[10]
 
     def set(self, route_id, terminus_id, station_id, direction, time, pattern, description, trip_id, station_id_list, vehicle, core_time, color):
         self.route_id = route_id
@@ -245,6 +167,7 @@ class gtfsFerry():
         self.stop_list = stop_list
         self.stop_id_list = stop_id_list
 
+# Creates an event loop if one does not exist
 def _get_or_create_eventloop():
     try:
         return asyncio.get_event_loop()
@@ -262,6 +185,7 @@ def _responseIndex(index):
     if (index <= 0):
         raise Exception("INVALID RESPONSES INDEX, MUST BE > 0")
 
+# Sorts the list of objects by time
 def sort(objects):
     if (objects == []):
         return False
@@ -279,10 +203,12 @@ def sort(objects):
 
 def keyMTA(string):
     global APIMTA
+    _validkeySubway(string)
     APIMTA = string
 
 def keyBUSTIME(string):
     global APIBUSTIME
+    _validkeyBus(string)
     APIBUSTIME = string
 
 def _getAPIMTA():
@@ -303,6 +229,7 @@ def _validkeyBus(key):
     if (str(requests.get(f'http://bustime.mta.info/api/where/stop/MTA_550320.xml?key={key}'))) != "<Response [200]>":
         raise Exception("INVALID KEY")
 
+# Converts a bus stop ID to a bus stop name
 def convertBus(input):
     if type(input) != type("") and type(input) != type(0):
         raise Exception("INVALID CLASS: This method requires a String or an Integer")
@@ -314,6 +241,7 @@ def convertBus(input):
     stop_name = root[4][4].text
     return stop_name
 
+# Converts a subway stop ID to a subway stop name
 def convertSubway(input):
     if type(input) != type(""):
         raise Exception("INVALID CLASS: This method requires a String")
@@ -333,6 +261,7 @@ def convertSubway(input):
     else:
         return output
 
+# Converts a LIRR stop ID to a LIRR stop name
 def convertLIRR(input):
     output = ""
     if type(input) != type(""):
@@ -349,6 +278,7 @@ def convertLIRR(input):
     
     return output
 
+# Converts a LIRR route ID to a LIRR route name
 def convertLIRR_route(input):
     
     db = json.load(open("lirr_routes.json"))
@@ -358,6 +288,8 @@ def convertLIRR_route(input):
     except:
         return (db["12"]["branch"], db["12"]["color"])
 
+
+# Converts a ferry stop ID to a ferry stop name
 def convertFerry(input):
     if type(input) != type(""):
         raise Exception("INVALID CLASS: This method requires a String")
@@ -372,6 +304,7 @@ def convertFerry(input):
     else:
         return output
 
+# Asynchronous requests to the MTA API
 async def _requestMTA(session, url, API):
     async with session.get(url, headers={'x-api-key' : API}) as response:
         data = await response.read()
@@ -386,6 +319,7 @@ async def _requestFeedMTA(sites, API):
         out = await asyncio.gather(*tasks, return_exceptions=True)
         return out
 
+# Asynchronous requests to the BusTime API
 async def _requestBustime(session, url):
     async with session.get(url) as response:
         
@@ -401,6 +335,8 @@ async def _requestFeedBustime(sites):
         out = await asyncio.gather(*tasks, return_exceptions=True)
         return out
 
+# List of URLs for the MTA API. Because the MTA API is split into multiple feeds, this list is used to request all of the feeds at once.
+# For example, if F trains are running on the A line, those trains would only appear on the F feed. This list is used to request both the A and F feeds.
 def _url():
     link = []
     link.append('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si')
@@ -413,6 +349,7 @@ def _url():
     link.append('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs')
     return link
 
+# Worker function for the asynchranous parsing of MTA Subway Data
 def _transitSubwayWorker(stop, links, current_time, final, cur):
     try:
         times = []
@@ -457,6 +394,9 @@ def _transitSubwayWorker(stop, links, current_time, final, cur):
         train.set("X", "NO TRAINS", "NO TRAINS", "NO TRAINS", stop[0], stop[1], "X", "NO TRAINS", "NO TRAINS", "NO TRAINS", "NO TRAINS", "NO TRAINS")
         final.append([cur, train])
 
+# Asynchronous parsing of MTA Subway Data
+# The function is divided into two parts. The first part uses the Asyncio module to asynchronously request all links of the MTA API.
+# The second part uses the Multiprocessing module to asynchronously parse the data from the MTA API.
 def _transitSubway(stops, API):
 
     with multiprocessing.Manager() as manager:
@@ -479,6 +419,8 @@ def _transitSubway(stops, API):
 
     return final
 
+# Synchranous parsing of MTA Bus Data
+# Because the entire BusTime API can be requested at once, this function requests the entire API and then parses the data for every inputted stop.
 def _transitBus(stops, API):
     final = []
     current_time = datetime.datetime.now()
@@ -560,10 +502,11 @@ def _transitBus(stops, API):
 
     return final
 
+# Worker function for the asynchranous parsing of MTA LIRR Data
 def _transitLIRRWorker(stop, direction, responses, minute, target_routes, lister, feed, cur):
     times = []
     current_time = datetime.datetime.now()
-
+    
     try:
         for entity in feed.entity:
             destination = []
@@ -627,10 +570,13 @@ def _transitLIRRWorker(stop, direction, responses, minute, target_routes, lister
     except:
         
         e = gtfsLIRR()
-      
+        print(traceback.format_exc())
         e.set("NO TRAINS", "NO TRAINS", stop, direction, "X", "NO TRAINS", "NO TRAINS", "NO TRAINS", ["NO TRAINS"], "NO TRAINS", "00:00 XM", "NO TRAINS")
         lister.append([cur, e])
 
+# Asynchronous parsing of MTA LIRR Data
+# The function is divided into two parts. The first part requestd the entire LIRR feed from the MTA API.
+# The second part uses the Multiprocessing module to asynchronously parse the data from the MTA API for each stop.
 def _transitLIRR(inputt, API):
    
     while True:
@@ -642,7 +588,7 @@ def _transitLIRR(inputt, API):
         except:
             
             te.sleep(5)
-
+    
     with multiprocessing.Manager() as manager:
         final = manager.list()
         
@@ -660,7 +606,7 @@ def _transitLIRR(inputt, API):
 
     return final
 
-
+# Retrieves real-time ferry data from the NYC Ferry API
 def _transitFerry(stop, target, responses):
     try:
         current_time = datetime.datetime.now()
@@ -722,6 +668,7 @@ def _transitFerry(stop, target, responses):
 
     return times
 
+# Gets the route description and route name for a given route ID
 def _routes(service):
     with open('routes.txt','r') as csv_file:
         csv_file = csv.reader(csv_file)
@@ -729,6 +676,8 @@ def _routes(service):
             if row[0] == service:
                 return row[3], row[4], row[6]
 
+# Retrieves MTA Subway Service Change data
+# If planned is set to False, then only unplanned service changes will be returned
 def alertsSubway(planned=True):
    
     alerts = []
@@ -773,6 +722,8 @@ def alertsSubway(planned=True):
 
     return output
 
+# Returns MTA LIRR Service Change data
+# If planned is set to False, then only unplanned service changes will be returned
 def alertsLIRR(planned=False):
     alerts = []
     response = requests.get("https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Flirr-alerts", headers={'x-api-key' : _getAPIMTA()})
@@ -795,6 +746,8 @@ def alertsLIRR(planned=False):
                                 alerts.append([[item.route_id for item in entity.alert.informed_entity if item.route_id != ""], entity.alert.header_text.translation[0].text])
     return alerts
 
+# Returns MTA Bus Service Change data
+# If planned is set to False, then only unplanned service changes will be returned
 def alertsBus(planned=False):
     alerts = []
     response = requests.get("https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fbus-alerts", headers={'x-api-key' : _getAPIMTA()})
@@ -816,6 +769,7 @@ def alertsBus(planned=False):
                                 alerts.append([[item.route_id for item in entity.alert.informed_entity if item.route_id != ""], entity.alert.header_text.translation[0].text])
     return alerts
 
+# Returns NYC Ferry Service Change data
 def alertsFerry():
     alerts = []
     response = requests.get("http://nycferry.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/alert")
@@ -830,6 +784,7 @@ def alertsFerry():
                             alerts.append(entity.alert.header_text.translation[0].text)
     return alerts
 
+# Caller functions for each transit type
 def gtfsSubwayBATCHED(stops):
     output = _transitSubway(stops, _getAPIMTA())
     return output
