@@ -1,0 +1,50 @@
+{
+    "9": {
+        "branch": "Port Washington",
+        "color": "c60c30"
+    },
+    "3": {
+        "branch": "Oyster Bay",
+        "color": "06af4b"
+    },
+    "10": {
+        "branch": "Port Jefferson",
+        "color": "006ec7"
+    },
+    "2": {
+        "branch": "Hempstead",
+        "color": "ce8e00"
+    },
+    "8": {
+        "branch": "West Hempstead",
+        "color": "00a1de"
+    },
+    "6": {
+        "branch": "Long Beach",
+        "color": "ff6319"
+    },
+    "7": {
+        "branch": "Far Rockaway",
+        "color": "6e3219"
+    },
+    "5": {
+        "branch": "Montauk",
+        "color": "00b2a9"
+    },
+    "4": {
+        "branch": "Ronkonkoma",
+        "color": "a626aa"
+    },
+    "1": {
+        "branch": "Babylon",
+        "color": "00985f"
+    },
+    "11": {
+        "branch": "Belmont Park",
+        "color": "60269e"
+    },
+    "12": {
+        "branch": "City Zone",
+        "color": "4d5357"
+    }
+}

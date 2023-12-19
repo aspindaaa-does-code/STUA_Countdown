@@ -1,0 +1,162 @@
+@font-face {
+    font-family: helveticaLight;
+    src: url("helvetica-light.ttf");
+}
+
+@font-face {
+    font-family: standardMediumCondensed;
+    src: url("standard-medium-condensed.otf");
+}
+
+@font-face {
+    font-family: standardMedium;
+    src: url("standard-medium.otf");
+}
+
+h1.timeLIRR {
+    font-family: standardMedium;
+    font-size: 5vh
+}
+
+div.time {
+    height:50%; 
+    margin-left: 15.5vh;
+}
+
+h1.time {
+    font-family: standardMedium;
+    font-size: 6.95vh
+}
+
+h1.bus {
+    font-family: standardMediumCondensed;
+    font-size: 6.95vh;
+}
+
+h1.terminusLIRR {
+    /*white-space: nowrap;*/
+    font-family: standardMedium;
+    font-size: 4vh;
+    white-space: nowrap;
+    /*animation: marquee linear infinite;*/
+    /*animation-duration: 6s;*/
+    
+}
+
+h1.terminusLIRRani {
+    font-family: standardMedium; 
+    font-size: 5.5vh;
+    white-space: nowrap;
+    /*animation: marqueeLIRR linear infinite;
+    animation-duration: 15s;*/
+}
+
+h1.terminus {
+    /*white-space: nowrap;*/
+    font-family: standardMedium;
+    font-size: 6vh;
+    white-space: nowrap;
+    /* animation: marquee 6s linear infinite; */
+}
+
+h1.delay {
+    font-family: standardMedium;
+    font-size: 4vh
+}
+
+h1.branch {
+    font-family: standardMediumCondensed;
+    font-size: 5vh;
+    color: black;
+    margin-left: 2%;
+    margin-top: 12%;
+}
+
+h1.animation {
+    white-space: nowrap;
+    animation: marquee linear infinite;
+    animation-duration: 8s;
+}
+
+div.animation {
+    overflow: hidden;
+}
+
+h1.terminusX {
+    /*white-space: nowrap;*/
+    font-family: helveticaLight;
+    font-size: 3vh;
+    white-space: nowrap;
+    /* animation: marquee 6s linear infinite; */
+}
+
+@keyframes marquee {
+    0% { transform: translateX(-25%); }
+    25% { transform: translateX(-25%); }
+    50% { transform: translateX(0%);}
+    75% { transform: translateX(0%);}
+    100% { transform: translateX(-25%); }
+}
+
+@keyframes marqueeLIRR {
+    0% { transform: translateX(var(--LIRRstart)); }
+    5% { transform: translateX(var(--LIRRstart)); }
+    95% { transform: translateX(calc(-1 * var(--LIRRstart))); }
+    100% { transform: translateX(calc(-1 * var(--LIRRstart))); }
+}
+
+h1.blink {
+    animation: blink linear infinite;
+    animation-duration: 2s;
+    color: #ffffff
+}
+
+h1.blink_terminus {
+    color: #ffff00
+}
+
+p.gym {
+    margin: 0px; 
+    color: white; 
+    font-size: 60vh;
+    font-family: standardMedium;
+    caret-color: transparent;
+}
+
+p.sch {
+    margin: 0px;
+    color: white;
+    font-family: standardMedium;
+    font-size: 7.5vh;
+    caret-color: transparent;
+}
+
+@keyframes blink {
+    50% { opacity: 0%; }
+}
+
+#progressbar {
+    background-color: black;
+    border-radius: 0px;
+    /* (height of inner div) / 2 + padding */
+    padding: 5px;
+    width: 80%;
+    margin: auto;
+    /*height: 10%;*/
+}
+
+#progressbarouter {
+    background-color: white;
+    border-radius: 0px;
+    /* (height of inner div) / 2 + padding */
+    padding: 3px;
+    
+}
+  
+#progressbarinner {
+    background-color: black;
+    width: 0%;
+    /* Adjust with JavaScript */
+    border-radius: 0px;
+    
+}

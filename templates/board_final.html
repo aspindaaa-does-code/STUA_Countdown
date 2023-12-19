@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>STUA Departure Board</title>
+        <link rel="icon" type="image/png" href="/static/svg/x.png">
+        <style>
+            @font-face {
+                font-family: helveticaLight;
+                src: url("/static/helvetica-light.ttf");
+            }
+
+            @font-face {
+                font-family: standardMediumCondensed;
+                src: url("/static/standard-medium-condensed.otf");
+            }
+
+            @font-face {
+                font-family: robotoBold;
+                src: url("/static/Roboto-Bold.ttf");
+            }
+
+            @font-face {
+                font-family: standardMedium;
+                src: url("/static/standard-medium.otf");
+            }
+
+            @keyframes blink {
+                50% { opacity: 0%; }
+            }
+
+            .blink {
+                animation: blink linear infinite;
+                animation-duration: 2s;
+            }
+
+        </style>
+    </head>
+    <body style="height: 100svh; width: 100vw; background-color: black; overflow: hidden; padding: 0%; margin: 0%;">
+        <div id="welcome" style="box-shadow: 0px 0px 20px 0px black; width: 100%; height: 5.5%; background-color: black; z-index: 3; position: relative;">
+            <div style="margin-left: 5px; height: 100%; width: fit-content; background-color: inherit; position: absolute; display: flex; align-items: center; left: 0;">
+                <p style="font-size: 3.75vh; font-weight: bold; color: white; font-family: robotoBold;">Welcome to Stuyvesant High School</p>
+            </div>
+            <div style="margin-right: 5px; height: 100%; width: fit-content; background-color: inherit; display: flex; align-items: center; position: absolute; right: 0;">
+
+                <p class="credits" style="font-family: Arial, Helvetica, sans-serif; font-size: 3.75vh; font-weight: bold; color: white; margin-right: 6px; display: none;">Maintained By: Lopen Zuo ('25)</p>
+                <p class="credits" style="font-family: Arial, Helvetica, sans-serif; font-size: 3.75vh; font-weight: bold; color: white; margin-right: 6px; display: none;">Designed and Coded By: Ravindra Mangar ('23)</p>
+                <span class="credits" style="margin: 0; padding: 0; display: none; height: fit-content; width: fit-content; align-items: center;">
+                    <p style="font-family: Arial, Helvetica, sans-serif; font-size: 3.75vh; font-weight: bold; color: white; margin-right: 6px;">Powered By:</p>
+                    <img src="/static/SU.png" style="height: 4.75vh; width: 4.75vh;">
+                    <img src="/static/svg/x.png" style="height: 5vh; width: 6vh;">
+                </span>
+
+            </div>
+        </div>
+        <div style="box-shadow: 0px 0px 20px 0px black; width: 100%; height: 5.5%; background-color: #222222; z-index: 2; position: relative;">
+            <div id="delay_container" style="margin-left: 5px; height: 100%; width: 45%; background-color: inherit; overflow: hidden; white-space: nowrap; position: absolute; left: 0;">
+                <div id="delay_cell" style="height: 100%; width: fit-content; display: none; align-items: center; position: absolute;">
+                    <p id="delay_count" style="font-family: Arial, Helvetica, sans-serif; font-size: 3.75vh; color: white; margin-right: 6px;">0 Service Disruptions:</p>
+                </div>
+
+            </div>
+            <div style="margin-right: 5px; height: 100%; width: fit-content; background-color: inherit; position: absolute; right: 0; display: flex; align-items: center;">
+                <p id="datetime" style="font-family: Arial, Helvetica, sans-serif; font-size: 3.75vh; color: white; margin-right: 6px;">Wednesday, Sep. 6 @ 3:35 pm</p>
+            </div>
+        </div>
+        <div style="background-color: #222222; height: 89%; width: 100%; z-index: 1; display: flex; align-items: center; flex-direction: column; padding: 10px; box-sizing: border-box; justify-content: center;">
+            <div style="background-color: inherit; height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center;">
+
+                <p style="margin: 0; color: whitesmoke; font-family: standardMedium; font-size: 3.7vh; margin-bottom: 1vh; margin-top: 0vh;">Northbound towards Uptown, Queens, and The Bronx</p>
+
+                <div style="height: 9.66%; width: 100%; background-color: inherit; display: flex; position: relative; margin-top: 0.5vh; margin-bottom: 0.5vh;">
+                    <div id="uptown_seventh" style="height: 100%; width: 100%; position: relative;">
+                        <div class="1" style="height: 100%; width: 50%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #eeeeee; z-index: 4; position: absolute; display: flex;">
+                            <div class="borough" style="height: 100%; width: 3.5vh; background-color: #26bbae; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <p style="font-family: Arial, Helvetica, sans-serif; writing-mode: vertical-rl; text-orientation: upright; font-weight: bold; font-size: 2vh; color: white;">MAN</p>
+                            </div>
+                            <div style="background-color: inherit; height: 100%; width: fit-content; display: flex; align-items: center; justify-content: center;">
+                                <img class="img" src="/static/svg/3.svg" style="height: 93%; width: auto; padding: 0.5em;">
+                            </div>
+                            <div class="terminus_container" style="background-color: inherit; height: 100%; flex-grow: 1; position: relative; white-space: nowrap; overflow: hidden;">
+                                <p class="station" style="font-family: Arial, Helvetica, sans-serif; font-size: 2.4vh; margin: 0; padding: 0; position: absolute; top: 0; margin-top: 0.6vh;">CHAMBERS ST STA.</p>
+                                <p class="terminus" style="font-family: standardMedium; font-size: 4.4vh; margin: 0; padding: 0; position: absolute; bottom: 0; margin-bottom: 0.3vh;">To: Harlem-148 St</p>
+                            </div>
+                            <p class="time" style="font-weight: bold; font-size: 5vh; margin: 0; padding: 0; white-space: nowrap; display: flex; align-items: center; padding-left: 0.5em; padding-right: 0.2em; font-family: standardMedium; padding-top: 0.1em;">5 min</p>
+                        </div>
+                        <div class="shadow" style="height: 92%; width: 49.75%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; z-index: 4; position: absolute; display:none; border-style: solid; border-color: yellow; border-width: 0.4vh;">
+
+                        </div>
+                        <div class="2" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #dddddd; z-index: 3; position: absolute; margin-left: 45%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/1.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">5m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="3" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #cccccc; z-index: 2; position: absolute; margin-left: 57.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/3.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="4" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #bbbbbb; z-index: 1; position: absolute; margin-left: 70%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/2.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="5" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #aaaaaa; z-index: 0; position: absolute; margin-left: 82.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/1.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">10m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 9.66%; width: 100%; background-color: inherit; display: flex; position: relative; margin-top: 0.5vh; margin-bottom: 0.5vh;">
+                    <div id="uptown_eighth" style="height: 100%; width: 100%; position: relative;">
+                        <div class="1" style="height: 100%; width: 50%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #eeeeee; z-index: 4; position: absolute; display: flex;">
+                            <div class="borough" style="height: 100%; width: 3.5vh; background-color: #26bb3f; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <p style="font-family: Arial, Helvetica, sans-serif; writing-mode: vertical-rl; text-orientation: upright; font-weight: bold; font-size: 2vh; color: white;">QNS</p>
+                            </div>
+                            <div style="background-color: inherit; height: 100%; width: fit-content; display: flex; align-items: center; justify-content: center;">
+                                <img class="img" src="/static/svg/e.svg" style="height: 93%; width: auto; padding: 0.5em;">
+                            </div>
+                            <div class="terminus_container" style="background-color: inherit; height: 100%; flex-grow: 1; position: relative; white-space: nowrap; overflow: hidden;">
+                                <p class="station" style="font-family: Arial, Helvetica, sans-serif; font-size: 2.4vh; margin: 0; padding: 0; position: absolute; top: 0; margin-top: 0.6vh;">CHAMBERS ST-WTC STA.</p>
+                                <p class="terminus" style="font-family: standardMedium; font-size: 4.4vh; margin: 0; padding: 0; position: absolute; bottom: 0; margin-bottom: 0.3vh;">To: Jamaica Center-Parsons/Archer</p>
+                            </div>
+                            <p class="time" style="font-weight: bold; font-size: 5vh; margin: 0; padding: 0; white-space: nowrap; display: flex; align-items: center; padding-left: 0.5em; padding-right: 0.2em; font-family: standardMedium; padding-top: 0.1em;">5 min</p>
+                        </div>
+                        <div class="shadow" style="height: 92%; width: 49.75%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; z-index: 4; position: absolute; display:none; border-style: solid; border-color: yellow; border-width: 0.4vh;">
+
+                        </div>
+                        <div class="2" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #dddddd; z-index: 3; position: absolute; margin-left: 45%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/c.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">5m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="3" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #cccccc; z-index: 2; position: absolute; margin-left: 57.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/c.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="4" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #bbbbbb; z-index: 1; position: absolute; margin-left: 70%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/a.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="5" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #aaaaaa; z-index: 0; position: absolute; margin-left: 82.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/e.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">10m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 9.66%; width: 100%; background-color: inherit; display: flex; position: relative; margin-top: 0.5vh; margin-bottom: 0.5vh;">
+                    <div id="uptown_bbch" style="height: 100%; width: 100%; position: relative;">
+                        <div class="1" style="height: 100%; width: 50%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #eeeeee; z-index: 4; position: absolute; display: flex;">
+                            <div class="borough" style="height: 100%; width: 3.5vh; background-color: #26bb46; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <p style="font-family: Arial, Helvetica, sans-serif; writing-mode: vertical-rl; text-orientation: upright; font-weight: bold; font-size: 2vh; color: white;">QNS</p>
+                            </div>
+                            <div style="background-color: inherit; height: 100%; width: fit-content; display: flex; align-items: center; justify-content: center;">
+                                <img class="img" src="/static/svg/j.svg" style="height: 93%; width: auto; padding: 0.5em;">
+                            </div>
+                            <div class="terminus_container" style="background-color: inherit; height: 100%; flex-grow: 1; position: relative; white-space: nowrap; overflow: hidden;">
+                                <p class="station" style="font-family: Arial, Helvetica, sans-serif; font-size: 2.4vh; margin: 0; padding: 0; position: absolute; top: 0; margin-top: 0.6vh;">BROOKLYN BRIDGE-CHAMBERS ST STA.</p>
+                                <p class="terminus" style="font-family: standardMedium; font-size: 4.4vh; margin: 0; padding: 0; position: absolute; bottom: 0; margin-bottom: 0.3vh;">To: Jamaica Center-Parsons/Archer</p>
+                            </div>
+                            <p class="time" style="font-weight: bold; font-size: 5vh; margin: 0; padding: 0; white-space: nowrap; display: flex; align-items: center; padding-left: 0.5em; padding-right: 0.2em; font-family: standardMedium; padding-top: 0.1em;">5 min</p>
+                        </div>
+                        <div class="shadow" style="height: 92%; width: 49.75%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; z-index: 4; position: absolute; display:none; border-style: solid; border-color: yellow; border-width: 0.4vh;">
+
+                        </div>
+                        <div class="2" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #dddddd; z-index: 3; position: absolute; margin-left: 45%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/4.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">5m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="3" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #cccccc; z-index: 2; position: absolute; margin-left: 57.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/5.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="4" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #bbbbbb; z-index: 1; position: absolute; margin-left: 70%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/z.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="5" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #aaaaaa; z-index: 0; position: absolute; margin-left: 82.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/4.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">10m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin: 0; color: whitesmoke; font-family: standardMedium; font-size: 3.7vh; margin-bottom: 1vh; margin-top: 2.5vh;">Southbound towards Downtown and Brooklyn</p>
+
+                <div style="height: 9.66%; width: 100%; background-color: inherit; display: flex; position: relative; margin-top: 0.5vh; margin-bottom: 0.5vh;">
+                    <div id="downtown_seventh" style="height: 100%; width: 100%; position: relative;">
+                        <div class="1" style="height: 100%; width: 50%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #eeeeee; z-index: 4; position: absolute; display: flex;">
+                            <div class="borough"  style="height: 100%; width: 3.5vh; background-color: #26bbae; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <p style="font-family: Arial, Helvetica, sans-serif; writing-mode: vertical-rl; text-orientation: upright; font-weight: bold; font-size: 2vh; color: white;">MAN</p>
+                            </div>
+                            <div style="background-color: inherit; height: 100%; width: fit-content; display: flex; align-items: center; justify-content: center;">
+                                <img class="img" src="/static/svg/1.svg" style="height: 93%; width: auto; padding: 0.5em;">
+                            </div>
+                            <div class="terminus_container" style="background-color: inherit; height: 100%; flex-grow: 1; position: relative; white-space: nowrap; overflow: hidden;">
+                                <p class="station" style="font-family: Arial, Helvetica, sans-serif; font-size: 2.4vh; margin: 0; padding: 0; position: absolute; top: 0; margin-top: 0.6vh;">CHAMBERS ST STA.</p>
+                                <p class="terminus" style="font-family: standardMedium; font-size: 4.4vh; margin: 0; padding: 0; position: absolute; bottom: 0; margin-bottom: 0.3vh;">To: South Ferry</p>
+                            </div>
+                            <p class="time" style="font-weight: bold; font-size: 5vh; margin: 0; padding: 0; white-space: nowrap; display: flex; align-items: center; padding-left: 0.5em; padding-right: 0.2em; font-family: standardMedium; padding-top: 0.1em;">5 min</p>
+                        </div>
+                        <div class="shadow" style="height: 92%; width: 49.75%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; z-index: 4; position: absolute; display:none; border-style: solid; border-color: yellow; border-width: 0.4vh;">
+
+                        </div>
+                        <div class="2" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #dddddd; z-index: 3; position: absolute; margin-left: 45%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/1.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">5m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="3" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #cccccc; z-index: 2; position: absolute; margin-left: 57.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/3.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="4" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #bbbbbb; z-index: 1; position: absolute; margin-left: 70%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/2.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="5" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #aaaaaa; z-index: 0; position: absolute; margin-left: 82.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/1.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">10m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 9.66%; width: 100%; background-color: inherit; display: flex; position: relative; margin-top: 0.5vh; margin-bottom: 0.5vh;">
+                    <div id="downtown_eighth" style="height: 100%; width: 100%; position: relative;">
+                        <div class="1" style="height: 100%; width: 50%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #eeeeee; z-index: 4; position: absolute; display: flex;">
+                            <div class="borough"  style="height: 100%; width: 3.5vh; background-color: #8a4ff7; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <p style="font-family: Arial, Helvetica, sans-serif; writing-mode: vertical-rl; text-orientation: upright; font-weight: bold; font-size: 2vh; color: white;">QNS</p>
+                            </div>
+                            <div style="background-color: inherit; height: 100%; width: fit-content; display: flex; align-items: center; justify-content: center;">
+                                <img class="img" src="/static/svg/a.svg" style="height: 93%; width: auto; padding: 0.5em;">
+                            </div>
+                            <div class="terminus_container" style="background-color: inherit; height: 100%; flex-grow: 1; position: relative; white-space: nowrap; overflow: hidden;">
+                                <p class="station" style="font-family: Arial, Helvetica, sans-serif; font-size: 2.4vh; margin: 0; padding: 0; position: absolute; top: 0; margin-top: 0.6vh;">CHAMBERS ST-WTC STA.</p>
+                                <p class="terminus" style="font-family: standardMedium; font-size: 4.4vh; margin: 0; padding: 0; position: absolute; bottom: 0; margin-bottom: 0.3vh;">To: Ozone Park-Lefferts Blvd</p>
+                            </div>
+                            <p class="time" style="font-weight: bold; font-size: 5vh; margin: 0; padding: 0; white-space: nowrap; display: flex; align-items: center; padding-left: 0.5em; padding-right: 0.2em; font-family: standardMedium; padding-top: 0.1em;">5 min</p>
+                        </div>
+                        <div class="shadow" style="height: 92%; width: 49.75%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; z-index: 4; position: absolute; display:none; border-style: solid; border-color: yellow; border-width: 0.4vh;">
+
+                        </div>
+                        <div class="2" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #dddddd; z-index: 3; position: absolute; margin-left: 45%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/c.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;">OP</p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">5m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="3" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #cccccc; z-index: 2; position: absolute; margin-left: 57.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/a.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;">OP</p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="4" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #bbbbbb; z-index: 1; position: absolute; margin-left: 70%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/a.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;">FR</p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="5" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #aaaaaa; z-index: 0; position: absolute; margin-left: 82.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/c.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">10m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 9.66%; width: 100%; background-color: inherit; display: flex; position: relative; margin-top: 0.5vh; margin-bottom: 0.5vh;">
+                    <div id="downtown_broadway" style="height: 100%; width: 100%; position: relative;">
+                        <div class="1" style="height: 100%; width: 50%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #eeeeee; z-index: 4; position: absolute; display: flex;">
+                            <div class="borough" style="height: 100%; width: 3.5vh; background-color: #fa2424; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <p style="font-family: Arial, Helvetica, sans-serif; writing-mode: vertical-rl; text-orientation: upright; font-weight: bold; font-size: 2vh; color: white;">BK</p>
+                            </div>
+                            <div style="background-color: inherit; height: 100%; width: fit-content; display: flex; align-items: center; justify-content: center;">
+                                <img class="img" src="/static/svg/r.svg" style="height: 93%; width: auto; padding: 0.5em;">
+                            </div>
+                            <div class="terminus_container" style="background-color: inherit; height: 100%; flex-grow: 1; position: relative; white-space: nowrap; overflow: hidden;">
+                                <p class="station" style="font-family: Arial, Helvetica, sans-serif; font-size: 2.4vh; margin: 0; padding: 0; position: absolute; top: 0; margin-top: 0.6vh; color: rgb(0, 0, 0);">CITY HALL STA.</p>
+                                <p class="terminus" style="font-family: standardMedium; font-size: 4.4vh; margin: 0; padding: 0; position: absolute; bottom: 0; margin-bottom: 0.3vh; color: rgb(0, 0, 0);">To: Bay Ridge-95 St</p>
+                            </div>
+                            <p class="time" style="font-weight: bold; font-size: 5vh; margin: 0; padding: 0; white-space: nowrap; display: flex; align-items: center; padding-left: 0.5em; padding-right: 0.2em; font-family: standardMedium; padding-top: 0.1em; color: rgb(0, 0, 0);">5 min</p>
+                        </div>
+                        <div class="shadow" style="height: 92%; width: 49.75%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; z-index: 4; position: absolute; display: none; border-style: solid; border-color: yellow; border-width: 0.4vh;">
+
+                        </div>
+                        <div class="2" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #dddddd; z-index: 3; position: absolute; margin-left: 45%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/w.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">5m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="3" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #cccccc; z-index: 2; position: absolute; margin-left: 57.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/r.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="4" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #bbbbbb; z-index: 1; position: absolute; margin-left: 70%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/w.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">7m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="5" style="height: 100%; width: 17.5%; border-radius: 10px; box-shadow: 0px 0px 10px 0px #222222; background-color: #aaaaaa; z-index: 0; position: absolute; margin-left: 82.5%; border-radius: 10px;">
+                            <div style="height: 100%; width: 100%; position: relative;">
+                                <div style="height: 100%; position: absolute; width: 71%; right: 0;">
+                                    <div style="height: 100%; width: 100%; position: relative; display: flex; align-items: center;">
+                                        <img class="img" src="/static/svg/r.svg" style="height: 6vh; width: auto; position: absolute; left: 0.75vh;">
+                                        <p class="note" style="position: absolute; left: 6.2vh; font-family: standardMediumCondensed; font-size: 3.2vh; margin: 0; margin-top: 2%; writing-mode: vertical-rl; text-orientation: upright;"></p>
+                                        <p class="time" style="position: absolute; right: 0.75vh; font-family: standardMedium; font-weight: bold; font-size: 5.2vh; margin: 0; margin-top: 2%;">10m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin: 0; color: whitesmoke; font-family: standardMedium; font-size: 3.7vh; margin-bottom: 1vh; margin-top: 2.5vh;">Buses and Long Island Rail Road</p>
+
+
+                <div style="height: 9.66%; width: 100%; display: flex; position: relative; margin-top: 0.5vh; margin-bottom: 0.5vh; z-index: 2;">
+                    <div style="height: 100%; width: 100%; position: relative;">
+                        <div style="height: 100%; width: 49.75%; background-color: #dddddd; position: absolute; left: 0; box-shadow: 0px 0px 10px 0px; border-radius: 10px 10px 0px 0px; display: flex;">
+                            <div id="M20" style="height: 100%; width: 25%; background-color: #333333; position: relative; display: flex; border-radius: 10px 0px 0px 0px; justify-content: center;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: white; font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh;">WEST ST/CHAMBERS ST</p>
+                                <p class="route" style="color: white; position: absolute; left: 1vh; top: 3.5vh; font-family: standardMedium; font-size: 3.5vh; margin: 0;">M20</p>
+                                <p class="time" style="color: white; position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0;">25m</p>
+                            </div>
+                            <div id="SIM7" style="height: 100%; width: 25%; background-color: #222222; position: relative; display: flex; justify-content: center;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: white; font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh;">WEST ST/VESEY ST</p>
+                                <p class="route" style="color: white; position: absolute; left: 1vh; top: 3.5vh; font-family: standardMedium; font-size: 3.5vh; margin: 0;">SIM33</p>
+                                <p class="time" style="color: white; position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0;">25m</p>
+                            </div>
+                            <div id="SIM33" style="height: 100%; width: 25%; background-color: #333333; position: relative; display: flex; justify-content: center;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: white; font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh;">WEST ST/VESEY ST</p>
+                                <p class="route" style="color: white; position: absolute; left: 1vh; top: 3.5vh; font-family: standardMedium; font-size: 3.5vh; margin: 0;">SIM7</p>
+                                <p class="time" style="color: white; position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0;">25m</p>
+                            </div>
+                            <div id="SIM34" style="height: 100%; width: 25%; background-color: #222222; position: relative; display: flex; justify-content: center; border-radius: 0px 10px 0px 0px;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: white; font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh;">WARREN ST/BROADWAY</p>
+                                <p class="route" style="color: white; position: absolute; left: 1vh; top: 3.5vh; font-family: standardMedium; font-size: 3.5vh; margin: 0;">SIM34</p>
+                                <p class="time" style="color: white; position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0;">25m</p>
+                            </div>
+                        </div>
+                        <div style="height: 100%; width: 49.75%; background-color: #dddddd; position: absolute; right: 0; box-shadow: 0px 0px 10px 0px; border-radius: 10px 10px 0px 0px; display: flex; z-index: 2;">
+
+
+                            <div id="penn" style="height: 100%; width: 25%; background-color: lightpink; border-radius: 10px 0px 0px 0px; position: relative; display: flex; justify-content: center;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh; font-weight: bold;">NEW YORK PENN STATION</p>
+                                <div style="position: absolute; left: 1vh; top: 3.2vh; background-color: #fa2424; height: 4vh; width: 8.75vh; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                    <p style="margin: 0; padding: 0; font-family: standardMedium; color: white; margin-top: 0.35vh; font-size: 2.75vh;">8333</p>
+                                </div>
+                                <p style="color: rgb(0, 0, 0); position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0; font-weight: bold;">25m</p>
+                            </div>
+                            <div id="atln" style="height: 100%; width: 25%; background-color: lightgreen; position: relative; display: flex; justify-content: center;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh; font-weight: bold;">ATLANTIC TERMINAL</p>
+                                <div style="position: absolute; left: 1vh; top: 3.2vh; background-color: #fa2424; height: 4vh; width: 8.75vh; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                    <p style="margin: 0; padding: 0; font-family: standardMedium; color: white; margin-top: 0.35vh; font-size: 2.75vh;">8333</p>
+                                </div>
+                                <p style="color: rgb(0, 0, 0); position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0; font-weight: bold;">25m</p>
+                            </div>
+                            <div id="gctm" style="height: 100%; width: 25%; background-color: lightblue; position: relative; display: flex; justify-content: center;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh; font-weight: bold;">GRAND CENTRAL MADISON</p>
+                                <div style="position: absolute; left: 1vh; top: 3.2vh; background-color: #fa2424; height: 4vh; width: 8.75vh; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                    <p style="margin: 0; padding: 0; font-family: standardMedium; color: white; margin-top: 0.35vh; font-size: 2.75vh;">8333</p>
+                                </div>
+                                <p style="color: rgb(0, 0, 0); position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0; font-weight: bold;">25m</p>
+                            </div>
+                            <div id="ferrysi" style="height: 100%; width: 25%; background-color: #b8b6b6; position: relative; display: flex; justify-content: center; border-radius: 0px 10px 0px 0px;">
+                                <p style="white-space: nowrap; overflow: hidden; position: absolute; top: 0.5vh; margin: 0; color: rgb(0, 0, 0); font-family: Arial, Helvetica, sans-serif; font-size: 1.5vh; font-weight: bold;">BATTERY PARK VESEY ST</p>
+                                <img style="left: 1vh; top: 2.25vh; position: absolute; width: auto; height: 5.5vh;" src="/static/svg/ferry.png">
+                                <p class="time" style="color: rgb(0, 0, 0); position: absolute; right: 1vh; top: 3vh; font-family: standardMedium; font-size: 4.5vh; margin: 0; font-weight: bold;">25m</p>
+                            </div>
+                        </div>
+
+                        <div id="lirr_container" style="height: 120%; width: 49.75%; background-color: #dddddd; position: absolute; right: 0; box-shadow: 0px 0px 10px 0px; border-radius: 10px 10px 0px 0px; z-index: 1; margin-top: -5.5vh; white-space: nowrap; overflow: hidden;">
+                            <p id="lirr_scroll" style="font-family: standardMedium; position: absolute; top: 1.1vh; margin: 0; font-size: 3vh; padding-left: 1vh; padding-right: 1vh;">lushing-Main St --- Murray Hill --- Something Here --- Something Here --- Something Here</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </body>
+
+    <script>
+
+        var CRIT = [6, 7, 9, 12, 12, 20]
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        var credits = 0;
+        async function displayCredits() {
+            while (true) {
+                if (credits > 2) {
+                    credits = 0;
+                }
+                document.getElementsByClassName("credits")[credits].style.display = "flex";
+                for (let vis = 0; vis <= 100; vis++) {
+                    document.getElementsByClassName("credits")[credits].style.opacity = vis + "%";
+                    await sleep(5);
+                }
+                await sleep(3000);
+                for (let vis = 100; vis >= 0; vis--) {
+                    document.getElementsByClassName("credits")[credits].style.opacity = vis + "%";
+                    await sleep(5);
+                }
+                document.getElementsByClassName("credits")[credits].style.display = "none";
+                credits++;
+            }
+        }
+
+        displayCredits();
+
+        const date = new Date();
+        console.log(date.toDateString());
+
+        async function updateTime() {
+            while (true) {
+                const date = new Date();
+                document.getElementById("datetime").innerHTML = `${date.toDateString()} @ ${date.toLocaleTimeString()}`;
+                await sleep(1000);
+            }
+        }
+
+        updateTime();
+
+        async function updateDelay(pos, diff) {
+            // console.log(pos);
+            const delay_container = document.getElementById("delay_container");
+            const delay_cell = document.getElementById("delay_cell");
+
+            if (diff < 0) {
+                diff = delay_cell.clientWidth - delay_container.clientWidth;
+            }
+
+            else if ((pos == 0)) {
+                document.getElementById("delay_cell").style.display = "flex";
+                for (let vis = 0; vis <= 100; vis++) {
+                    document.getElementById("delay_cell").style.opacity = vis + "%";
+                    await sleep(5);
+                }
+                diff = delay_cell.clientWidth - delay_container.clientWidth;
+                await sleep(2000);
+            }
+   
+            if (diff >= 0) {
+                if (pos < diff) {
+                    pos += 1;
+                } else {
+                    pos = 0;
+                    await sleep(2000);
+                    for (let vis = 100; vis >= 0; vis--) {
+                        document.getElementById("delay_cell").style.opacity = vis + "%";
+                        await sleep(5);
+                    }
+                    document.getElementById("delay_cell").style.display = "none";
+                }
+            }
+            delay_cell.style.left = `${-pos}px`;
+            requestAnimationFrame(() => {
+                this.updateDelay(pos, diff);
+            });
+        }
+
+        updateDelay(0, 0);
+
+        async function getDelay() {
+            var use_delay = await fetch('http://127.0.0.1:7082/delay').then(response => response.json());
+            //console.log(use_delay);
+            if (use_delay.length == 1) {
+                document.getElementById("delay_count").innerHTML = `${use_delay.length} Service Disruption:`;
+            } else {
+                document.getElementById("delay_count").innerHTML = `${use_delay.length} Service Disruptions:`;
+            }
+            if (use_delay.length > 0) {
+                let summarize = []
+                for (let i = 0; i < use_delay.length; i++) {
+                    for (let j = 0; j < use_delay[i][0].length; j++) {
+                        if (summarize.includes(use_delay[i][0][j])) {} else {
+                            summarize.push(use_delay[i][0][j]);
+                        }
+                    }
+                }
+
+          
+                const alphabet = "1234567acebdfmgjznqrw";
+                let num_given = [];
+                let exclude_given = [];
+                for (let i = 0; i < summarize.length; i++) {
+                    if (alphabet.indexOf(summarize[i].toLowerCase()) != -1) {
+                        num_given.push(alphabet.indexOf(summarize[i].toLowerCase()));
+                    } else {
+                        exclude_given.push(summarize[i]);
+                    }
+                }
+                num_given.sort(function(a, b) {
+                    return a - b;
+                });
+                let export_given = [];
+                for (let i = 0; i < num_given.length; i++) {
+                    export_given.push(alphabet[num_given[i]]);
+                }
+                for (let j = 0; j < exclude_given.length; j++) {
+                    export_given.push(exclude_given[j]);
+                }
+                summarize = export_given;
+              
+
+                let delay_string = "";
+                for (let i = 0; i < summarize.length; i++) {
+                    delay_string += `<img src="/static/svg/${summarize[i].toLowerCase()}.svg" style="height: 4.75vh; width: 4.75vh; margin-right: 3px;">`;
+                }
+                document.getElementById("delay_cell").innerHTML = document.getElementById("delay_count").outerHTML + delay_string;
+            }
+        }
+
+        setInterval(getDelay, 30000);
+        getDelay();
+
+        function getBranch(terminus) {
+            if (terminus.includes("To: Ozone Park-Lefferts Blvd")) {
+                return "OP"
+            } else if (terminus.includes("To: Far Rockaway-Mott Av")) {
+                return "FR"
+            } else if (terminus === "To: Rockaway Park-Beach 116 St") {
+                return "RP"
+            } else if (terminus.includes("To: Jamaica-179 St")) {
+                return "179"
+            } else {
+                return null
+            }
+        }
+
+        function getBorough(terminus) {
+            if (terminus == "Q") {
+                return ["#26bb3f", "QNS"]
+            } else if (terminus == "Bx") {
+                return ["#8a4ff7", "BX"]
+            } else if (terminus == "Bk") {
+                return ["#f86cda", "BK"]
+            } else if (terminus == "M") {
+                return ["#26bbae", "MAN"]
+            } else {
+                return ["#fa2424", "OOS"]
+            }
+        }
+
+        function parseSubway(line, name) {
+            // console.log(line);
+            for (let i = 1; i <= 5; i++) {
+                let target = document.getElementById(name).getElementsByClassName(i)[0];
+                target.getElementsByClassName("time")[0].innerHTML = `${line[i].time}m`;
+                target.getElementsByClassName("img")[0].src = `${line[i].emblem}`;
+                if (i == 1){
+                    target.getElementsByClassName("terminus")[0].innerHTML = `${line[i].terminus[0]}`;
+                    let borough = getBorough(line[i].borough);
+                    target.getElementsByClassName("borough")[0].style.backgroundColor = `${borough[0]}`;
+                    target.getElementsByClassName("borough")[0].getElementsByTagName("p")[0].innerHTML = `${borough[1]}`;
+
+                    if (((name == 'uptown_seventh') && (line[i].time == "6")) || ((name == 'uptown_eighth') && (line[i].time == "7")) || ((name == 'uptown_bbch') && (line[i].time == "12")) || ((name == 'downtown_seventh') && (line[i].time == "6")) || ((name == 'downtown_eighth') && (line[i].time == "7")) || ((name == 'downtown_broadway') && (line[i].time == "9"))) {
+                        document.getElementById(name).getElementsByClassName("shadow")[0].style.display = "flex";
+                        target.style.backgroundColor = "#111111";
+                        target.getElementsByClassName("station")[0].style.color = "white";
+                        target.getElementsByClassName("terminus")[0].style.color = "yellow";
+                        target.getElementsByClassName("time")[0].style.color = "white";
+                        //target.getElementsByClassName("terminus")[0].classList.add("blink");
+                    } else {
+                        document.getElementById(name).getElementsByClassName("shadow")[0].style.display = "none";
+                        target.style.backgroundColor = "#eeeeee";
+                        target.getElementsByClassName("station")[0].style.color = "black";
+                        target.getElementsByClassName("terminus")[0].style.color = "black";
+                        target.getElementsByClassName("time")[0].style.color = "black";
+                        //target.getElementsByClassName("terminus")[0].classList.remove("blink");
+                    }
+
+                } else {
+                    let branch = getBranch(line[i].terminus);
+                    if (branch != null) {
+                        target.getElementsByClassName("note")[0].innerHTML = `${branch}`;
+                    } else {
+                        target.getElementsByClassName("note")[0].innerHTML = ``;
+                    }
+                }
+            }
+        }
+
+        async function parseBus(line) {
+
+            let bus_M20 = document.getElementById("M20");
+            bus_M20.getElementsByClassName("route")[0].innerHTML = "M20";
+            bus_M20.getElementsByClassName("time")[0].innerHTML = `${line.M20.time}m`;
+
+            let bus_SIM7 = document.getElementById("SIM7");
+            bus_SIM7.getElementsByClassName("route")[0].innerHTML = "SIM7";
+            bus_SIM7.getElementsByClassName("time")[0].innerHTML = `${line.SIM7.time}m`;
+
+            let bus_SIM33 = document.getElementById("SIM33");
+            bus_SIM33.getElementsByClassName("route")[0].innerHTML = "SIM33";
+            bus_SIM33.getElementsByClassName("time")[0].innerHTML = `${line.SIM33.time}m`;
+
+            let bus_SIM34 = document.getElementById("SIM34");
+            bus_SIM34.getElementsByClassName("route")[0].innerHTML = "SIM34";
+            bus_SIM34.getElementsByClassName("time")[0].innerHTML = `${line.SIM34.time}m`;
+
+        }
+
+        async function getSubway() {
+            var use_subway = await fetch('http://127.0.0.1:7082/data').then(response => response.json());
+            use_subway = use_subway.data;
+
+            parseSubway(use_subway.uptown_seventh, "uptown_seventh");
+            parseSubway(use_subway.uptown_eighth, "uptown_eighth");
+            parseSubway(use_subway.uptown_bbch, "uptown_bbch");
+            parseSubway(use_subway.downtown_seventh, "downtown_seventh");
+            parseSubway(use_subway.downtown_eighth, "downtown_eighth");
+            parseSubway(use_subway.downtown_broadway, "downtown_broadway");
+
+            parseBus(use_subway.bus)
+
+            document.getElementById("ferrysi").getElementsByClassName("time")[0].innerHTML = `${use_subway.ferry.time}m`;
+        }
+
+        setInterval(getSubway, 10000);
+        getSubway();
+
+        async function updateSubway(pos, diff, target, target_container) {
+
+            if (diff < 0) {
+                diff = target.clientWidth - target_container.clientWidth;
+            }
+
+            else if ((pos == 0)) {
+                target.style.display = "block";
+                for (let vis = 0; vis <= 100; vis++) {
+                    target.style.opacity = vis + "%";
+                    await sleep(5);
+                }
+                diff = target.clientWidth - target_container.clientWidth;
+                await sleep(2000);
+            }
+            // console.log([pos, diff])
+            if (diff >= 0) {
+                if (pos < diff) {
+                    pos += 1;
+                } else {
+                    pos = 0;
+                    await sleep(2000);
+                    for (let vis = 100; vis >= 0; vis--) {
+                        target.style.opacity = vis + "%";
+                        await sleep(5);
+                    }
+                    target.style.display = "none";
+                }
+            }
+            target.style.left = `${-pos}px`;
+            requestAnimationFrame(() => {
+                this.updateSubway(pos, diff, target, target_container);
+            });
+        }
+
+        updateSubway(0, 0, document.getElementById('uptown_seventh').getElementsByClassName('terminus_container')[0].getElementsByClassName("terminus")[0], document.getElementById('uptown_seventh').getElementsByClassName('terminus_container')[0])
+        updateSubway(0, 0, document.getElementById('uptown_eighth').getElementsByClassName('terminus_container')[0].getElementsByClassName("terminus")[0], document.getElementById('uptown_eighth').getElementsByClassName('terminus_container')[0])
+        updateSubway(0, 0, document.getElementById('uptown_bbch').getElementsByClassName('terminus_container')[0].getElementsByClassName("terminus")[0], document.getElementById('uptown_bbch').getElementsByClassName('terminus_container')[0])
+        updateSubway(0, 0, document.getElementById('downtown_seventh').getElementsByClassName('terminus_container')[0].getElementsByClassName("terminus")[0], document.getElementById('downtown_seventh').getElementsByClassName('terminus_container')[0])
+        updateSubway(0, 0, document.getElementById('downtown_eighth').getElementsByClassName('terminus_container')[0].getElementsByClassName("terminus")[0], document.getElementById('downtown_eighth').getElementsByClassName('terminus_container')[0])
+        updateSubway(0, 0, document.getElementById('downtown_broadway').getElementsByClassName('terminus_container')[0].getElementsByClassName("terminus")[0], document.getElementById('downtown_broadway').getElementsByClassName('terminus_container')[0])
+
+        var useLIRR = null;
+
+        function downloadLIRR() {
+            return useLIRR;
+        }
+
+        function setdownloadLIRR(input) {
+            useLIRR = input;
+        }
+
+        async function getLIRR() {
+            let temp_LIRR = await fetch('http://127.0.0.1:7082/lirr').then(response => response.json());
+            setdownloadLIRR(temp_LIRR.data.lirr);
+
+            if (useLIRR.vehicle[0] == "NO TRAINS") {
+                document.getElementById("penn").getElementsByTagName("div")[0].getElementsByTagName("p")[0].innerHTML = "----";
+                document.getElementById("penn").getElementsByTagName("div")[0].style.backgroundColor = "#222222";
+            } else {
+                document.getElementById("penn").getElementsByTagName("div")[0].getElementsByTagName("p")[0].innerHTML = useLIRR.vehicle[0];
+                document.getElementById("penn").getElementsByTagName("div")[0].style.backgroundColor = useLIRR.color[0];
+            }
+            document.getElementById("penn").getElementsByTagName("p")[2].innerHTML = `${useLIRR.crit[0]}m`;
+
+            if (useLIRR.vehicle[1] == "NO TRAINS") {
+                document.getElementById("atln").getElementsByTagName("div")[0].getElementsByTagName("p")[0].innerHTML = "----";
+                document.getElementById("atln").getElementsByTagName("div")[0].style.backgroundColor = "#222222";
+            } else {
+                document.getElementById("atln").getElementsByTagName("div")[0].getElementsByTagName("p")[0].innerHTML = useLIRR.vehicle[1];
+                document.getElementById("atln").getElementsByTagName("div")[0].style.backgroundColor = useLIRR.color[1];
+            }
+            document.getElementById("atln").getElementsByTagName("p")[2].innerHTML = `${useLIRR.crit[1]}m`;
+
+            if (useLIRR.vehicle[2] == "NO TRAINS") {
+                document.getElementById("gctm").getElementsByTagName("div")[0].getElementsByTagName("p")[0].innerHTML = "----";
+                document.getElementById("gctm").getElementsByTagName("div")[0].style.backgroundColor = "#222222";
+            } else {
+                document.getElementById("gctm").getElementsByTagName("div")[0].getElementsByTagName("p")[0].innerHTML = useLIRR.vehicle[2];
+                document.getElementById("gctm").getElementsByTagName("div")[0].style.backgroundColor = useLIRR.color[2];
+            }
+            document.getElementById("gctm").getElementsByTagName("p")[2].innerHTML = `${useLIRR.crit[2]}m`;
+        }
+
+        setInterval(getLIRR, 10000);
+        getLIRR()
+
+        async function updateLIRR(pos, diff, target, target_container, num) {
+            let lirr_colors = ["lightpink", "lightgreen", "lightblue"];
+            let terminal_names = ["New York Penn Station", "Atlantic Terminal", "Grand Central Madison"];
+
+            if (diff < 0) {
+                diff = target.clientWidth - target_container.clientWidth;
+            }
+
+             if ((pos == 0)) {
+                target.style.display = "block";
+                for (let vis = 0; vis <= 100; vis++) {
+                    target.style.opacity = vis + "%";
+                    await sleep(3);
+                }
+                diff = target.clientWidth - target_container.clientWidth;
+                await sleep(1000);
+            }
+            // console.log([pos, diff])
+            if (diff) {
+                if (pos < diff) {
+                    pos += currentHeightRatio(0.275);
+                } else {
+                    pos = 0;
+                    await sleep(1000);
+                    for (let vis = 100; vis >= 0; vis--) {
+                        target.style.opacity = vis + "%";
+                        await sleep(3);
+                    }
+                    target.style.display = "none";
+
+                    if (downloadLIRR() != null) {
+                        num++;
+
+                        if (num > 2) {
+                            num = 0
+                        }
+
+                        target_container.style.backgroundColor = lirr_colors[num];
+                        if (downloadLIRR().vehicle[num] == "NO TRAINS") {
+                            //target.innerHTML = downloadLIRR().stops[num];
+                            target.innerHTML = `There are no Port Washington, Hempstead, or City Terminal Zone trains departing ${terminal_names[num]} at this time`;
+                        } else {
+                            target.innerHTML = `${downloadLIRR().time[num]} Train #${downloadLIRR().vehicle[num]} at ${terminal_names[num]} to ${downloadLIRR().dest[num]}, making stops at: ${downloadLIRR().stops[num]}`;
+                        }
+                    }
+                }
+            }
+            target.style.left = `${-pos}px`;
+
+            requestAnimationFrame(() => {
+                this.updateLIRR(pos, diff, target, target_container, num);
+            });
+        }
+
+        updateLIRR(0, 0, document.getElementById("lirr_scroll"), document.getElementById("lirr_container"), 0, useLIRR)
+
+        function currentHeightRatio(input) {
+            let oneheight = document.getElementsByTagName("body")[0];
+            let heightpix = oneheight.clientHeight;
+           
+            let heightvh = heightpix / 100;
+
+            return input * heightvh;
+        }
+
+    </script>
+
+</html>
