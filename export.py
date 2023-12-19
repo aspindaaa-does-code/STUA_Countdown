@@ -86,6 +86,14 @@ def export():
 
     bbch = bbch[:5]
 
+    for i in bbch:
+        if i.route_id == "5X":
+            i.route_id = "5"
+    
+    for i in masterlistSUBWAY:
+        if i.route_id == "5X":
+            i.route_id = "5"
+
     ferry = stua.gtfsFerry()
     ferry.get("136", "137", 1)
 
