@@ -13,8 +13,8 @@ MTA and BusTime keys can be found on the MTA Developer Portal and BusTime Develo
 import stua, time
 
 # Input API Keys here
-stua.keyMTA("INSERT MTA API KEY HERE") 
-stua.keyBUSTIME("INSERT BUSTIME API KEY HERE")
+stua.keyMTA("nVSXwNVJi45sBz1O6mDEE2adIk3VeP9t1qbgETSf") 
+stua.keyBUSTIME("6f064d4d-ed7d-415a-9d4a-c01204897506")
 
 # This is the minimum countdown time for a train to be displayed on the board, organized by line
 # The order is: Seventh Avenue Lines, Eighth Avenue Lines, Broadway Lines, Nassau Ave Lines, Lexington Avenue Lines
