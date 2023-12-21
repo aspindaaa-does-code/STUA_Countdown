@@ -570,7 +570,7 @@ def _transitLIRRWorker(stop, direction, responses, minute, target_routes, lister
     except:
         
         e = gtfsLIRR()
-        print(traceback.format_exc())
+        #print(traceback.format_exc())
         e.set("NO TRAINS", "NO TRAINS", stop, direction, "X", "NO TRAINS", "NO TRAINS", "NO TRAINS", ["NO TRAINS"], "NO TRAINS", "00:00 XM", "NO TRAINS")
         lister.append([cur, e])
 

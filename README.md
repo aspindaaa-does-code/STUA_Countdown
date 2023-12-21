@@ -16,7 +16,7 @@ The current version of the board is a web app coded using HTML/CSS/JS, being ran
 - Updated `gtfs_realtime_pb2.py` and `nyct_subway_pb2.py` may be required. To do so, download the protoc installer at https://github.com/protocolbuffers/protobuf and follow the instructions.
 - `gtfs-realtime.proto` is located at https://developers.google.com/transit/gtfs-realtime/gtfs-realtime-proto, `nyct-subway.proto` is in the MTA Developer Portal.
 
-To run the project, enter the MTA and BusTime API keys into `export.py`. Then, run `python3 __init__.py`. After running the above program, the API for the project can be found at http://127.0.0.1:7082/. The web app can be found at http://127.0.0.1:8082/.
+To run the project, enter the MTA and BusTime API keys into `export.py`. Then, run `python3 __init__.py`. After running the above program, the API for the project can be found at http://127.0.0.1:7082/. The web app can be found at http://127.0.0.1:8082/. <b>To properly terminate the program, type anything into the console and press enter.</b>
 - To access the API for subway/bus/ferry data: http://127.0.0.1:7082/data
 - To access the API for lirr data: http://127.0.0.1:7082/lirr
 - To access the API for delay data: http://127.0.0.1:7082/delay
