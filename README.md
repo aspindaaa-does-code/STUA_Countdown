@@ -8,7 +8,7 @@ Last Updated: <b>December 19th, 2023</b>
 In 2020, I was appointed to be the next leader of the Stuyvesant Transit and Urbanism Association (STUA). The previous leaders had been working with the MTA Google API for years, but were unable to figure out how to create a functioning departure board for the school. 
 <br>
 
-In September of 2022, the very first versions of the STUA Countdown Board were displayed, featuring data from the surrounding downtown subway lines, as well as the LIRR. First being coded using PyGame hosted on a local schol computer, this is the most up to date version of the project.
+In September of 2022, the very first versions of the STUA Countdown Board were displayed, featuring data from the surrounding downtown subway lines, as well as the LIRR. First being coded using PyGame hosted on a local school computer, this is the most up to date version of the project.
 
 The current version of the board is a web app coded using HTML/CSS/JS, being ran on a Nginx server hosted on Digital Ocean. The link to it is here: http://206.189.183.69:8082/. This repository contains the complete code from the project:
 
