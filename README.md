@@ -1,4 +1,5 @@
 # Personal Project: STUA Countdown Board
+<img src="static/svg/x.png" style="height: 50px; width: 55px; float: right;">
 Designed and Coded By: <b>Ravindra Mangar</b>
 <br>
 Last Updated: <b>December 19th, 2023</b>
