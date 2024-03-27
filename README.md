@@ -11,7 +11,7 @@ In 2020, I was appointed to be the next leader of the Stuyvesant Transit and Urb
 
 In September of 2022, the very first versions of the STUA Countdown Board were displayed, featuring data from the surrounding downtown subway lines, as well as the LIRR. First being coded using PyGame hosted on a local school computer, this is the most up to date version of the project.
 
-The current version of the board is a web app coded using HTML/CSS/JS, being ran on a Nginx server hosted on Digital Ocean. The link to it is here: http://206.189.183.69:8082/. This repository contains the complete code from the project:
+The current version of the board is a web app coded using HTML/CSS/JS, being ran on a Nginx server hosted on Digital Ocean. The link to it is here: http://146.190.44.37:8082/. This repository contains the complete code from the project:
 
 - MTA and BusTime keys can be found from MTA Developer Resources at https://api.mta.info/#/landing by creating an account. NYC Ferry does not require an API key.
 - Updated `gtfs_realtime_pb2.py` and `nyct_subway_pb2.py` may be required. To do so, download the protoc installer at https://github.com/protocolbuffers/protobuf and follow the instructions.
