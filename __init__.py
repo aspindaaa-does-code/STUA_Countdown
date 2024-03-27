@@ -13,7 +13,6 @@ To properly terminate this program, type anything into the console and press ent
 # Imports
 import subprocess, multiprocessing
 
-
 if __name__ in "__main__":
     multiprocessing.freeze_support() # Enables freezing of the multiprocessing module, to allow for multiprocessing to work on Windows.
     
@@ -21,6 +20,7 @@ if __name__ in "__main__":
     main_api = subprocess.Popen(["python3", "main_api.py"])
     main_proc = subprocess.Popen(["python3", "main_proc.py"])
     main_web = subprocess.Popen(["python3", "main_web.py"])
+
 
     # Allows for the program to be terminated by typing anything into the console and pressing enter.
     while True:

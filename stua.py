@@ -306,7 +306,7 @@ def convertFerry(input):
 
 # Asynchronous requests to the MTA API
 async def _requestMTA(session, url, API):
-    async with session.get(url, headers={'x-api-key' : API}) as response:
+    async with session.get(url) as response:
         data = await response.read()
     return data
 
@@ -322,7 +322,6 @@ async def _requestFeedMTA(sites, API):
 # Asynchronous requests to the BusTime API
 async def _requestBustime(session, url):
     async with session.get(url) as response:
-        
         data = await response.read()
     return data
 
@@ -372,7 +371,7 @@ def _transitSubwayWorker(stop, links, current_time, final, cur):
                             continue
                         trip_id = entity.trip_update.trip.trip_id
                         route_id = entity.trip_update.trip.route_id
-                        if (stop[4] != "NONE" and stop[4] != route_id):
+                        if (len(stop[4]) != 0 and route_id not in stop[4]):
                             continue
                         for update in entity.trip_update.stop_time_update:
                             destination.append(update.stop_id)
@@ -441,17 +440,17 @@ def _transitBus(stops, API):
             for entity in feed.entity:
                 for update in entity.trip_update.stop_time_update:
 
-                    if ((update.stop_id == stop[0]) and (str(entity.trip_update.trip.direction_id) == str(stop[1]))):
+                    if (update.stop_id == stop[0]):
                         time = update.arrival.time
                         if (time < 0):
                             time = update.departure.time
                         time = datetime.datetime.fromtimestamp(time)
                         time = math.trunc(((time - current_time).total_seconds()) / 60)
-                        if (time < stop[3]):
+                        if (time < stop[2]):
                             continue
                         trip_id = entity.trip_update.trip.trip_id
                         route_id = entity.trip_update.trip.route_id
-                        if (stop[4] != "NONE" and stop[4] != route_id):
+                        if (stop[3] != "NONE" and stop[3] != route_id):
                             continue
                         vehicle = entity.trip_update.vehicle.id[-4:]
                         stop_id = update.stop_id
@@ -459,12 +458,11 @@ def _transitBus(stops, API):
                             destination.append(update.stop_id)
                         terminus_id = destination[-1]
                         direction = entity.trip_update.trip.direction_id
-
                         bus = gtfsBus()
                         bus.set(route_id, f'http://bustime.mta.info/api/where/stop/MTA_{terminus_id}.xml?key={API}', terminus_id, f'http://bustime.mta.info/api/where/stop/MTA_{stop_id}.xml?key={API}', stop_id, time, "", direction, trip_id, vehicle)
                         times.append(bus)
             sort(times)
-            final.append(times[stop[2]-1])
+            final.append(times[stop[1]-1])
 
         except:
             bus = gtfsBus()
@@ -472,33 +470,37 @@ def _transitBus(stops, API):
             final.append(bus)
 
     download = []
+
+
     for item in final:
+        #print((item.stop, item.terminus))
         download.append(item.stop)
-
         download.append(item.terminus)
- 
-    download = _get_or_create_eventloop().run_until_complete(_requestFeedBustime(download))
 
-    for num in range(0, len(final)):
+    download = _get_or_create_eventloop().run_until_complete(_requestFeedBustime(download))
+    for num in range(0, int(len(download)/2), 1):
         try:
-        
             tree = ET(fromstring(download[num*2]))
             root = tree.getroot()
             stop_name = root[4][4].text
+            direction = root[4][3].text
             for item in root[4][7]:
-                if (item[1].text == route_id):
-                    service_pattern = item[3].text
+                if (item[1].text == final[num].route_id):
+                    service_pattern = item[2].text
             final[num].stop = stop_name
             final[num].service_pattern = service_pattern
-
-            tree = ET(fromstring(download[(num*2)+1]))
+            
+            tree = ET(fromstring(download[num*2+1]))
             root = tree.getroot()
             terminus_name = root[4][4].text
+            #print(terminus_name)
             final[num].terminus = terminus_name
+            final[num].direction = direction
         except:
             final[num].stop = "NO BUSES"
             final[num].service_pattern = "NO BUSES"
             final[num].terminus = "NO BUSES"
+            final[num].direction = "NO BUSES"
 
     return final
 
@@ -678,49 +680,29 @@ def _routes(service):
 
 # Retrieves MTA Subway Service Change data
 # If planned is set to False, then only unplanned service changes will be returned
-def alertsSubway(planned=True):
-   
+def alertsSubway(planned=False):
     alerts = []
-    response = requests.get("https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts", headers={'x-api-key' : _getAPIMTA()})
-    feed = gtfs_realtime_pb2.FeedMessage()
-    feed.ParseFromString(response.content)
-
-
-    for entity in feed.entity:
-        for start in entity.alert.active_period:
-            if (int(start.end) == 0) or (int(start.start) < calendar.timegm((datetime.datetime.utcnow()).utctimetuple()) < int(start.end)):
-                if planned == False:
-                    if "planned_work" not in entity.id:
-                        if (entity.alert.header_text.translation):
-                            for update in entity.alert.header_text.translation:
-                                if update.language == "en-html":
-                                        alerts.append([[item.route_id for item in entity.alert.informed_entity if item.route_id != ""], entity.alert.header_text.translation[0].text])
-                else:
-                    if (entity.alert.header_text.translation):
-                        for update in entity.alert.header_text.translation:
-                            if update.language == "en-html":
-                                alerts.append([[item.route_id for item in entity.alert.informed_entity if item.route_id != ""], entity.alert.header_text.translation[0].text])
-
-    delays = [i[1] for i in alerts]
-    emblems = [i[0] for i in alerts]
-
-    results_emblem = []
-    results_delays = []
-    for i in range(0, len(delays)):
-        if delays[i] not in results_delays:
-            results_delays.append(delays[i])
-            results_emblem.append(emblems[i])
-        else:
-            for item in emblems[i]:
-                index = results_delays.index(delays[i])
-                results_emblem[index].append(item)
-
-    output = []
-
-    for i in range(0, len(results_delays)):
-        output.append([results_emblem[i], results_delays[i]])
-
-    return output
+    response = requests.get("https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts.json", headers={'x-api-key' : _getAPIMTA()})
+    feed = json.loads(response.text)
+    for entity in feed["entity"]:
+        for start in entity["alert"]["active_period"]:
+            if (start["start"] > calendar.timegm((datetime.datetime.utcnow()).utctimetuple())):
+                continue
+            else:
+                if "end" in start:
+                    if (start["end"] < calendar.timegm((datetime.datetime.utcnow()).utctimetuple())):
+                        continue
+                    else:
+                        pass
+            for translation in entity["alert"]["header_text"]["translation"]:
+                if translation["language"] == "en":
+                        routes = [i["route_id"] for i in entity["alert"]["informed_entity"] if "route_id" in i]
+                        if planned == False:
+                            if "planned_work" not in entity["id"]:
+                                alerts.append([routes, translation["text"], entity["alert"]["transit_realtime.mercury_alert"]["alert_type"]])
+                        else:
+                            alerts.append([routes, translation["text"], entity["alert"]["transit_realtime.mercury_alert"]["alert_type"]])
+    return alerts
 
 # Returns MTA LIRR Service Change data
 # If planned is set to False, then only unplanned service changes will be returned

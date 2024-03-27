@@ -45,4 +45,4 @@ def data():
 # Runs the STUA Countdown Board API on port 7082.
 if __name__ in "__main__":
     multiprocessing.freeze_support()
-    app.run(port=7082)
+    app.run(host='0.0.0.0', port=7082)
